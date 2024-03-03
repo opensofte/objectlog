@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sweetie.objectlog.objectlog.mapper.ObjectOperationMapper">
+
+    <resultMap id="objectOperationMap" type="org.sweetie.objectlog.core.model.ObjectOperationModel">
+        <id column = "id" property = "id"/>
+        <result column = "parent_id" property = "parentId"/>
+        <result column = "module_name" property = "moduleName"/>
+        <result column = "object_name" property = "objectName"/>
+        <result column = "object_id" property = "objectId"/>
+        <result column = "object" property = "object"/>
+        <result column = "operation_type" property = "operationType"/>
+        <result column = "version" property = "version"/>
+        <result column = "comment" property = "comment"/>
+        <result column = "create_time" property = "createTime"/>
+        <result column = "update_time" property = "updateTime"/>
+        <result column = "del_flag" property="delFlag"/>
+    </resultMap>
+</mapper>

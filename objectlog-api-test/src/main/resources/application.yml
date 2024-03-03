@@ -1,0 +1,24 @@
+server:
+  port: 8888
+
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/objectlog?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&serverTimezone=UTC
+    username: root
+    password: 123456
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  type-aliases-package: org.sweetie.objectlog.**.model
+  #全局配置
+  global-config:
+    logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+    logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+    db-column-underline: true #驼峰下划线转换
+  configuration:
+    #驼峰
+    map-underscore-to-camel-case: true
+    #输出日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
