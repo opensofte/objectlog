@@ -1,9 +1,7 @@
-package org.sweetie.objectlog.test.service;/*
- * Copyright (C), 2021-2024
+package org.sweetie.objectlog.test.service;
+/*
  * FileName: ObjectOperationService
  * Author gouhao
- * Date: 2024/3/2 16:25
- * Description:
  */
 
 import com.baomidou.mybatisplus.service.IService;
@@ -11,10 +9,22 @@ import org.sweetie.objectlog.test.model.SysUserModel;
 
 import java.util.List;
 
-public interface SysUserService  extends IService<SysUserModel> {
+public interface SysUserService extends IService<SysUserModel> {
     void add(SysUserModel insertModel);
+
+    void update(SysUserModel insertModel);
+
+    void delete(String id);
 
     void addList(List<SysUserModel> insertModelList);
 
-    void addassociate(SysUserModel userModel);
+    void updateList(List<SysUserModel> insertModelList);
+
+    void deleteList(List<String> idList);
+
+    void addAssociate(SysUserModel userModel);
+
+    void updateAssociate(SysUserModel userModel);
+
+    void deleteAssociate(String userId, String roleId);
 }

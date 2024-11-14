@@ -1,29 +1,40 @@
-package org.sweetie.objectlog.core.strategy;/*
- * Copyright (C), 2021-2024
+package org.sweetie.objectlog.core.strategy;
+/*
  * FileName: UpdatedParseStrategy
  * Author gouhao
- * Date: 2024/2/25 17:42
- * Description:
  */
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.sweetie.objectlog.core.ObjectLogTask;
 import org.sweetie.objectlog.core.annotation.LogEntity;
 import org.sweetie.objectlog.core.model.ObjectAttributeModel;
-import org.sweetie.objectlog.domain.ObjectOperationDto;
+import org.sweetie.objectlog.core.model.ObjectOperationModel;
 
 import java.util.List;
 
 public class UpdatedParseStrategy extends AbstractAttributeParseStrategy {
+
     @Override
-    public boolean doParse(ObjectOperationDto model, Object modelObject, Object oldObject) throws IllegalAccessException {
-        List<ObjectAttributeModel> attributeModels = super.dealAttributeModelList(modelObject, oldObject);
-        LogEntity LogEntity = modelObject.getClass().getAnnotation(LogEntity.class);
-        if (null != LogEntity) {
-            model.setObject(JSONUtil.toJsonStr(modelObject));
+    public ObjectOperationModel doParse(ObjectLogTask task) throws Exception {
+        ObjectOperationModel model = super.getObject(task);
+        List<ObjectAttributeModel> attributeModels = super.dealAttributeModelList(task.getModelObject(), task.getOldObject());
+        //no change
+        if (CollUtil.isEmpty(attributeModels)) {
+            return null;
         }
-        model.setObjectName(modelObject.getClass().getSimpleName());
+        LogEntity LogEntity = task.getModelObject().getClass().getAnnotation(LogEntity.class);
+        if (null != LogEntity) {
+            model.setObject(JSONUtil.toJsonStr(task.getModelObject()));
+        }
+        model.setObjectName(task.getModelObject().getClass().getSimpleName());
         model.setAttributes(attributeModels);
-        return CollUtil.isNotEmpty(attributeModels);
+        return model;
+    }
+
+    @Override
+    public void parse(SqlCommandType sqlCommandType, Object parameterObject, String methodName) throws Exception {
+
     }
 }

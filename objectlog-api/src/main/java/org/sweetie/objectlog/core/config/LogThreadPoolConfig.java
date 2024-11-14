@@ -1,9 +1,7 @@
-package org.sweetie.objectlog.core.config;/*
- * Copyright (C), 2021-2023
+package org.sweetie.objectlog.core.config;
+/*
  * FileName: LogThreadPoolConfig
  * Author gouhao
- * Date: 2023/12/2 15:53
- * Description:
  */
 
 import org.springframework.context.annotation.Bean;

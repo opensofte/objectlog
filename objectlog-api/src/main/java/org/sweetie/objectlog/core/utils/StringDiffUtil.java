@@ -1,20 +1,11 @@
 package org.sweetie.objectlog.core.utils;
 
 import cn.hutool.json.JSONUtil;
-import difflib.Delta;
-import difflib.DiffRow;
-import difflib.DiffRowGenerator;
-import difflib.DiffUtils;
-import difflib.Patch;
-import org.sweetie.objectlog.core.enums.PartType;
+import difflib.*;
 import org.sweetie.objectlog.core.constant.Constant;
+import org.sweetie.objectlog.core.enums.PartType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class StringDiffUtil {
     private StringDiffUtil() {

@@ -1,20 +1,28 @@
-package org.sweetie.objectlog.core.utils;/*
- * Copyright (C), 2021-2023
+package org.sweetie.objectlog.core.utils;
+/*
  * FileName: HttpRequestUtil
  * Author gouhao
- * Date: 2023/12/2 18:18
- * Description:
  */
 
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.sweetie.objectlog.core.config.LogConfigProperty;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HttpRequestUtil {
-    public static String getToken() {
+
+    public static Map<String, String> getHeaders(LogConfigProperty logConfigProperty) {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
-        return request.getHeader("Authorization");
+        List<String> headers = logConfigProperty.getHeader();
+        Map<String, String> res = new HashMap<>(headers.size(), 1f);
+        for (String item : headers) {
+            res.put(item, request.getHeader(item));
+        }
+        return res;
     }
 }

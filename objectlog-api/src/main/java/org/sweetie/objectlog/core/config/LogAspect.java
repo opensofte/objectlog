@@ -1,9 +1,7 @@
-package org.sweetie.objectlog.core.config;/*
- * Copyright (C), 2021-2023
+package org.sweetie.objectlog.core.config;
+/*
  * FileName: LogTagAspect
  * Author gouhao
- * Date: 2023/12/2 15:46
- * Description:
  */
 
 import cn.hutool.core.collection.CollUtil;
@@ -12,8 +10,6 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -40,9 +36,10 @@ import java.util.stream.Collectors;
 public class LogAspect {
 
     private final Logger logger = LoggerFactory.getLogger(LogClient.class);
+
     @Pointcut("@annotation(org.sweetie.objectlog.core.annotation.LogPoint)")
-          public void objectLogPointCut() {
-      }
+    public void objectLogPointCut() {
+    }
 
     @Before(value = "objectLogPointCut()")
     public <T extends BaseEntity> void saveObject(JoinPoint joinPoint) throws Throwable {
@@ -51,39 +48,40 @@ public class LogAspect {
         MethodSignature sign = (MethodSignature) joinPoint.getSignature();
         Method method = sign.getMethod();
         //参数集合
-        Object [] args = joinPoint.getArgs();
+        Object[] args = joinPoint.getArgs();
         LogPoint annotation = method.getAnnotation(LogPoint.class);
-        try{
-            if(null != annotation) {
-                if (annotation.operation().getDone()){
+        try {
+            if (null != annotation) {
+                ThreadLocalUtil.setLogPoint(annotation);
+                if (annotation.operation().getDone()) {
                     this.dealOldData(annotation, args);
                 }
-                if (annotation.multiple() && StrUtil.isBlank(ThreadLocalUtil.getParentId())){
+                if (annotation.operation().getMultiple() && StrUtil.isBlank(ThreadLocalUtil.getParentId())) {
                     ThreadLocalUtil.setParentId(UuidUtil.getUUID());
                 }
                 this.parse(annotation);
             }
-        } catch (Throwable e){
+        } catch (Throwable e) {
             logger.error(method.getName() + "控制器执行异常" + JSONUtil.toJsonStr(args));
             throw e;
         }
     }
 
     private void parse(LogPoint annotation) {
-        HashMap<String,String > stringMap = new HashMap<>(2,1f);
+        HashMap<String, String> stringMap = new HashMap<>(2, 1f);
         stringMap.put(Constant.MODULE_NAME, annotation.moduleName());
         stringMap.put(Constant.REMARK, annotation.remark());
         ThreadLocalUtil.setStringMap(stringMap);
 
-        HashMap<String,Boolean> booleanMap = new HashMap<>(4,1f);
+        HashMap<String, Boolean> booleanMap = new HashMap<>(4, 1f);
         booleanMap.put(Constant.OPEN, true);
         booleanMap.put(Constant.COMMENT_OPERATION, OperationEnum.COMMON == annotation.operation());
         booleanMap.put(Constant.COMPLEX_OPERATION, OperationEnum.COMPLEX == annotation.operation());
         ThreadLocalUtil.setBooleanMap(booleanMap);
     }
 
-    private <T extends BaseEntity > void dealOldData (LogPoint annotation, Object[]args){ 
-        if (null == annotation){
+    private <T extends BaseEntity> void dealOldData(LogPoint annotation, Object[] args) {
+        if (null == annotation) {
             return;
         }
         List<T> updateModelList = this.getUpdateModelData(args, annotation);
@@ -100,8 +98,8 @@ public class LogAspect {
         }
     }
 
-    private <T extends BaseEntity> List<T> getUpdateModelData(Object[] args, LogPoint annotation){
-        if(args.length <1) {
+    private <T extends BaseEntity> List<T> getUpdateModelData(Object[] args, LogPoint annotation) {
+        if (args.length < 1) {
             return Collections.emptyList();
         }
         Class<T> entityClass = (Class<T>) annotation.entityHandler();
@@ -111,7 +109,7 @@ public class LogAspect {
         }
         List<T> updateModelList = new ArrayList<>(10);
         T model;
-        for (Object obj: dataList) {
+        for (Object obj : dataList) {
             model = entityClass.cast(obj);
             if (null != model.getId()) {
                 updateModelList.add(model);
@@ -121,23 +119,23 @@ public class LogAspect {
     }
 
     private void getTypeResult(Object item, List<Object> expectData) {
-        if(null == item){
+        if (null == item) {
             return;
         }
-        if(BaseEntity.class.isAssignableFrom(item.getClass())){
+        if (BaseEntity.class.isAssignableFrom(item.getClass())) {
             expectData.add(item);
         }
-         if ( item instanceof List){
+        if (item instanceof List) {
             List<Object> data = (List) item;
-            if(CollUtil.isNotEmpty(data) && BaseEntity.class.isAssignableFrom(data.get(0).getClass())){
+            if (CollUtil.isNotEmpty(data) && BaseEntity.class.isAssignableFrom(data.get(0).getClass())) {
                 expectData.addAll(data);
             }
         }
-         if(item instanceof Map) {
+        if (item instanceof Map) {
             for (Object entry : ((Map) item).values()) {
                 this.getTypeResult(entry, expectData);
             }
-         }
+        }
     }
 }
 

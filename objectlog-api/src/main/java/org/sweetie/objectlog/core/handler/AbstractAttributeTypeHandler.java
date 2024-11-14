@@ -11,7 +11,7 @@ public abstract class AbstractAttributeTypeHandler implements AttributeTypeHandl
         //固定值
         attributeModel.setOldValue(fieldWrapper.getOldValueString());
         attributeModel.setNewValue(fieldWrapper.getNewValueString());
-        attributeModel.setAttributeName (fieldWrapper.getAttributeName());
+        attributeModel.setAttributeName(fieldWrapper.getAttributeName());
         attributeModel.setAttributeAlias(fieldWrapper.getAttributeAlias());
         attributeModel.setAttributeType(attributeType);
     }

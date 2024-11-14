@@ -1,9 +1,7 @@
-package org.sweetie.objectlog.core.enums;/*
- * Copyright (C), 2021-2023
+package org.sweetie.objectlog.core.enums;
+/*
  * FileName: PartType
  * Author gouhao
- * Date: 2023/12/2 17:03
- * Description:
  */
 
 public enum PartType {

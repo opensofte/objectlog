@@ -1,9 +1,7 @@
-package org.sweetie.objectlog.test.service.impl;/*
- * Copyright (C), 2021-2024
+package org.sweetie.objectlog.test.service.impl;
+/*
  * FileName: ObjectOperationServiceImpl
  * Author gouhao
- * Date: 2024/3/2 16:25
- * Description:
  */
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;

@@ -1,20 +1,18 @@
-package org.sweetie.objectlog.core.handler;/*
- * Copyright (C), 2021-2023
+package org.sweetie.objectlog.core.handler;
+/*
  * FileName: DefaultAttributeValueHandler
  * Author gouhao
- * Date: 2023/12/2 17:20
- * Description:
  */
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.sweetie.objectlog.core.ObjectFieldWrapper;
 import org.sweetie.objectlog.core.enums.AttributeTypeEnum;
 import org.sweetie.objectlog.core.utils.ClassUtil;
 import org.sweetie.objectlog.core.utils.Html2TextUtil;
 import org.sweetie.objectlog.core.utils.SpringBeanContextUtil;
 import org.sweetie.objectlog.core.utils.StringDiffUtil;
-import org.sweetie.objectlog.core.ObjectFieldWrapper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -43,7 +41,7 @@ public class DefaultAttributeValueHandler extends AbstractAttributeValueHandler 
             default:
                 res = dealNormal(fieldWrapper, first);
                 break;
-        }            
+        }
         return res;
     }
 
@@ -71,7 +69,7 @@ public class DefaultAttributeValueHandler extends AbstractAttributeValueHandler 
         if (first && fieldWrapper.isExtendedValue()) {
             return doAttributeValueHandler(fieldWrapper);
         }
-        if (fieldWrapper.isAssociationValue()){
+        if (fieldWrapper.isAssociationValue()) {
             return handlerAssociationValue(fieldWrapper);
         }
         if (StrUtil.isBlank(fieldWrapper.getNewValueString())) {
@@ -92,28 +90,29 @@ public class DefaultAttributeValueHandler extends AbstractAttributeValueHandler 
     }
 
     private static String handlerAssociationValue(ObjectFieldWrapper fieldWrapper) {
-        if((null != fieldWrapper.getServiceImplClass())
-                && !ServiceImpl.class.equals(fieldWrapper.getServiceImplClass())){
-            try{
+        if ((null != fieldWrapper.getServiceImplClass())
+                && !ServiceImpl.class.equals(fieldWrapper.getServiceImplClass())) {
+            try {
                 Object instance = SpringBeanContextUtil.getContext().getBean(fieldWrapper.getServiceImplClass());
                 return dealValue(instance, fieldWrapper);
-            }catch (Exception e){
+            } catch (Exception e) {
                 //不做处理
             }
         }
-        if (StrUtil.isNotBlank(fieldWrapper.getServiceImplClassPath())){
-            try{
+        if (StrUtil.isNotBlank(fieldWrapper.getServiceImplClassPath())) {
+            try {
                 Class<?> aClass = Class.forName(fieldWrapper.getServiceImplClassPath());
                 Object instance = SpringBeanContextUtil.getContext().getBean(aClass);
-                return dealValue(instance,fieldWrapper);
+                return dealValue(instance, fieldWrapper);
             } catch (Exception e) {
                 //不做处理
             }
         }
         return getStr(fieldWrapper);
     }
-    private static String dealValue(Object service, ObjectFieldWrapper fieldWrapper) throws Exception{
-        if (null == service || StrUtil.isBlank(fieldWrapper.getNewValueString()) ||StrUtil.isBlank(fieldWrapper.getEntityFieldName())){
+
+    private static String dealValue(Object service, ObjectFieldWrapper fieldWrapper) throws Exception {
+        if (null == service || StrUtil.isBlank(fieldWrapper.getNewValueString()) || StrUtil.isBlank(fieldWrapper.getEntityFieldName())) {
             throw new RuntimeException();
         }
         ServiceImpl instance = (ServiceImpl) service;
@@ -121,7 +120,7 @@ public class DefaultAttributeValueHandler extends AbstractAttributeValueHandler 
         Field declaredField;
         List<String> valueList = new ArrayList<>();
         String value = "";
-        for (Object model:list) {
+        for (Object model : list) {
             declaredField = model.getClass().getDeclaredField(fieldWrapper.getEntityFieldName());
             declaredField.setAccessible(true);
             value = String.valueOf(declaredField.get(model));
@@ -129,7 +128,7 @@ public class DefaultAttributeValueHandler extends AbstractAttributeValueHandler 
                 valueList.add(value);
             }
         }
-        if (CollUtil.isEmpty(valueList)){
+        if (CollUtil.isEmpty(valueList)) {
             throw new RuntimeException();
         }
         String res = valueList.stream().collect(Collectors.joining(","));

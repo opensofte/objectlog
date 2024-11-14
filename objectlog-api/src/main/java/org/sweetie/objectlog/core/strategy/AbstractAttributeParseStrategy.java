@@ -1,30 +1,48 @@
-package org.sweetie.objectlog.core.strategy;/*
- * Copyright (C), 2021-2024
+package org.sweetie.objectlog.core.strategy;
+/*
  * FileName: AbstractAttributeParseStrategy
  * Author gouhao
- * Date: 2024/2/25 17:44
- * Description:
  */
 
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.session.defaults.DefaultSqlSession;
 import org.sweetie.objectlog.core.ObjectFieldWrapper;
+import org.sweetie.objectlog.core.ObjectLogTask;
+import org.sweetie.objectlog.core.annotation.LogEntity;
 import org.sweetie.objectlog.core.enums.AttributeTypeEnum;
 import org.sweetie.objectlog.core.handler.AttributeTypeHandler;
 import org.sweetie.objectlog.core.handler.BaseAttributeTypeHandler;
 import org.sweetie.objectlog.core.handler.DefaultAttributeTypeHandler;
-import org.sweetie.objectlog.core.utils.ClassUtil;
 import org.sweetie.objectlog.core.model.ObjectAttributeModel;
-import org.sweetie.objectlog.domain.ObjectOperationDto;
+import org.sweetie.objectlog.core.model.ObjectOperationModel;
+import org.sweetie.objectlog.core.utils.ClassUtil;
+import org.sweetie.objectlog.domain.BaseEntity;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public abstract class AbstractAttributeParseStrategy implements AttributeParseStrategy {
-    @Override
-    public boolean doParse(ObjectOperationDto model, Object modelObject, Object oldObject) throws IllegalAccessException {
-        return true;
+
+    protected Object getRealParamterObject(Object parameterObject) {
+        parameterObject = this.findObjectFromParameter(parameterObject, BaseEntity.class);
+        LogEntity annotation = Optional.ofNullable(parameterObject).orElseGet(Object::new).getClass().getAnnotation(LogEntity.class);
+        return annotation != null ? parameterObject : null;
     }
 
+    protected ObjectOperationModel getObject(ObjectLogTask task) {
+        //处理基础信息
+        ObjectOperationModel model = new ObjectOperationModel();
+        model.setId(task.getId());
+        model.setObjectId(task.getObjectId());
+        model.setParentId(task.getParentId());
+        model.setOperationType(task.getOperationType().name());
+        model.setModuleName(task.getModuleName());
+        model.setComment(task.getComment());
+        return model;
+    }
 
     public List<ObjectAttributeModel> dealAttributeModelList(Object modelObject, Object oldObject) throws IllegalAccessException {
         List<ObjectAttributeModel> attributeModelList = new ArrayList<>(10);
@@ -43,9 +61,9 @@ public abstract class AbstractAttributeParseStrategy implements AttributeParseSt
                         baseAttributeModel = handleExtendedAttributeType(fieldWrapper);
                     } else {
                         baseAttributeModel = handleBaseAttributeType(fieldWrapper);
-                        if (baseAttributeModel != null) {
-                            attributeModelList.add(baseAttributeModel);
-                        }
+                    }
+                    if (baseAttributeModel != null) {
+                        attributeModelList.add(baseAttributeModel);
                     }
                 }
             }
@@ -53,17 +71,17 @@ public abstract class AbstractAttributeParseStrategy implements AttributeParseSt
         return attributeModelList;
     }
 
-    private ObjectAttributeModel handleBaseAttributeType(ObjectFieldWrapper fieldWrapper){
+    private ObjectAttributeModel handleBaseAttributeType(ObjectFieldWrapper fieldWrapper) {
         AttributeTypeEnum baseAttributeType = AttributeTypeEnum.NORMAL;
-        if(fieldWrapper.getLogEntity()!= null){
+        if (fieldWrapper.getLogEntity() != null) {
             baseAttributeType = fieldWrapper.getLogEntity().attributeTypeEnum();
         }
         return DefaultAttributeTypeHandler.handlerAttributeChange(fieldWrapper, baseAttributeType);
     }
 
-    private ObjectAttributeModel handleExtendedAttributeType(ObjectFieldWrapper fieldWrapper){
+    private ObjectAttributeModel handleExtendedAttributeType(ObjectFieldWrapper fieldWrapper) {
         AttributeTypeHandler attributeTypeHandler = ClassUtil.getInstance(fieldWrapper.getExtendedTypeHandler());
-        if(null == attributeTypeHandler) {
+        if (null == attributeTypeHandler) {
             attributeTypeHandler = new BaseAttributeTypeHandler();
         }
         return attributeTypeHandler.handlerAttributeChange(fieldWrapper);
@@ -72,5 +90,39 @@ public abstract class AbstractAttributeParseStrategy implements AttributeParseSt
 
     private boolean nullableEquals(Object a, Object b) {
         return (a == null && b == null) || (a != null && a.equals(b));
+    }
+
+    @SuppressWarnings("unchecked")
+    protected static <T> T findObjectFromParameter(Object parameter, Class<T> target) {
+        if (parameter == null | target == null) {
+            return null;
+        }
+        if (target.isAssignableFrom(parameter.getClass())) {
+            return (T) parameter;
+        }
+        if (parameter instanceof String) {
+            return (T) parameter;
+        }
+
+        if (parameter instanceof MapperMethod.ParamMap) {
+            MapperMethod.ParamMap<Object> paramMap = (MapperMethod.ParamMap<Object>) parameter;
+            for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
+                Object paramValue = entry.getValue();
+                if (paramValue != null && target.isAssignableFrom(paramValue.getClass())) {
+                    return (T) paramValue;
+                }
+            }
+        }
+
+        if (parameter instanceof DefaultSqlSession.StrictMap) {
+            DefaultSqlSession.StrictMap<Object> paramMap = (DefaultSqlSession.StrictMap<Object>) parameter;
+            for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
+                Object paramValue = entry.getValue();
+                if (paramValue != null && target.isAssignableFrom(paramValue.getClass())) {
+                    return (T) paramValue;
+                }
+            }
+        }
+        return null;
     }
 }

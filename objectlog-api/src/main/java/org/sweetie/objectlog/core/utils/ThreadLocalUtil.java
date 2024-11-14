@@ -1,21 +1,24 @@
 package org.sweetie.objectlog.core.utils;
 /*
- * Copyright (C), 2021-2023
  * FileName: ThreadLocalUtil
  * Author gouhao
- * Date: 2023/12/2 18:26
- * Description:
  */
+import org.sweetie.objectlog.core.annotation.LogPoint;
 import org.sweetie.objectlog.domain.BaseEntity;
 
 import java.util.HashMap;
 
 public class ThreadLocalUtil {
     private static final ThreadLocal<String> TOKEN = new ThreadLocal<>();
+    private static final ThreadLocal<LogPoint> LOG_POINT = new ThreadLocal<>();
     private static final ThreadLocal<HashMap<String, ? extends BaseEntity>> OLD_DATA_MAP = new ThreadLocal<>();
     private static final ThreadLocal<HashMap<String, String>> STRING_MAP = new ThreadLocal<>();
     private static final ThreadLocal<HashMap<String, Boolean>> BOOLEAN_MAP = new ThreadLocal<>();
     private static final ThreadLocal<String> PARENT_ID= new ThreadLocal<>();
+
+    public static LogPoint getLogPoint() { return LOG_POINT.get(); }
+    public static void setLogPoint(LogPoint value) { LOG_POINT.set(value); }
+    public static void removeLogPoint() { LOG_POINT.remove(); }
 
     public static String getToken() { return TOKEN.get(); }
     public static void setToken(String value) { TOKEN.set(value); }
@@ -31,7 +34,9 @@ public class ThreadLocalUtil {
         if (null == OLD_DATA_MAP.get()){
             return null;
         }
-        return OLD_DATA_MAP.get().get(key);
+        BaseEntity oldData =  OLD_DATA_MAP.get().get(key);
+        OLD_DATA_MAP.get().put(key,null);//提前释放
+        return oldData;
     }
 
     public static void setStringMap(HashMap<String,String> stringMap){STRING_MAP.set(stringMap);}
@@ -64,6 +69,7 @@ public class ThreadLocalUtil {
         BOOLEAN_MAP.get().put(key,value);}
 
     public static void resetCurrentThreadInfo(){
+        removeLogPoint();
         removeOldDataMap();
         removeStringMap();
         removeBooleanMap();

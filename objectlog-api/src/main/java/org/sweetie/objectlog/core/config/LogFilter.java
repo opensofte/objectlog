@@ -1,9 +1,8 @@
-package org.sweetie.objectlog.core.config;/*
- * Copyright (C), 2021-2023
+package org.sweetie.objectlog.core.config;
+
+/*
  * FileName: LogFilter
  * Author gouhao
- * Date: 2023/12/2 15:54
- * Description:
  */
 
 import org.sweetie.objectlog.core.utils.ThreadLocalUtil;

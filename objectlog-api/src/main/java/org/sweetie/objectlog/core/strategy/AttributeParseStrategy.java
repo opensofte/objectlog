@@ -1,13 +1,16 @@
-package org.sweetie.objectlog.core.strategy;/*
- * Copyright (C), 2021-2024
+package org.sweetie.objectlog.core.strategy;
+/*
  * FileName: AttributeParseStrategy
  * Author gouhao
- * Date: 2024/2/25 17:23
- * Description:
  */
 
-import org.sweetie.objectlog.domain.ObjectOperationDto;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.sweetie.objectlog.core.ObjectLogTask;
+import org.sweetie.objectlog.core.model.ObjectOperationModel;
 
 public interface AttributeParseStrategy {
-    public abstract boolean doParse(ObjectOperationDto model, Object modelObject, Object oldObject) throws IllegalAccessException;
+    public abstract ObjectOperationModel doParse(ObjectLogTask task) throws Exception;
+
+    public abstract void parse(SqlCommandType sqlCommandType, Object parameterObject, String methodName) throws Exception;
+
 }

@@ -1,28 +1,29 @@
-package org.sweetie.objectlog.core.enums;/*
- * Copyright (C), 2021-2023
+package org.sweetie.objectlog.core.enums;
+/*
  * FileName: OperationEnum
  * Author gouhao
- * Date: 2023/12/2 17:00
- * Description:
  */
 
 public enum OperationEnum {
     /**
      * 操作类型枚举列表
      */
-    ADD("ADD", "新增",false),
-    DEL("DEL", "删除",false),
-    UPDATE("UPDATE", "编辑",false),
-    BASE("BASE", "基础",true),
-    COMMON("COMMON", "复合",true),
-    COMPLEX("COMPLEX", "复杂",true);
+    ADD("ADD", "新增", false, false),
+    DEL("DEL", "删除", false, false),
+    UPDATE("UPDATE", "编辑", false, false),
+    BASE("BASE", "基础", true, false),
+    COMMON("COMMON", "复合", true, true),
+    COMPLEX("COMPLEX", "复杂", true, true);
     private String key;
     private String value;
     private Boolean done;
-    OperationEnum(String key, String value,Boolean done) {
+    private Boolean multiple;
+
+    OperationEnum(String key, String value, Boolean done, Boolean multiple) {
         this.key = key;
         this.value = value;
         this.done = done;
+        this.multiple = multiple;
     }
 
     public static String getValueByKey(String key) {
@@ -39,11 +40,16 @@ public enum OperationEnum {
     public String getKey() {
         return key;
     }
+
     public String getValue() {
         return value;
     }
+
     public Boolean getDone() {
         return done;
     }
 
+    public Boolean getMultiple() {
+        return multiple;
+    }
 }

@@ -9,20 +9,23 @@ import com.baomidou.mybatisplus.enums.IdType;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class  BaseEntity implements Serializable {
+public class BaseEntity implements Serializable {
     @TableId(value = "id", type = IdType.UUID)
     private String id;
-    @TableField(fill = FieldFill.INSERT ,value = "create_time")
+    @TableField(fill = FieldFill.INSERT, value = "create_time")
     private LocalDateTime createTime;
-    @TableField(fill = FieldFill.INSERT_UPDATE ,value = "update_time")
+    @TableField(fill = FieldFill.INSERT_UPDATE, value = "update_time")
     private LocalDateTime updateTime;
     @TableLogic
     private Integer delFlag;
+
     public BaseEntity() {
     }
+
     public String getId() {
         return this.id;
     }
+
     public void setId(String id) {
         this.id = id;
     }

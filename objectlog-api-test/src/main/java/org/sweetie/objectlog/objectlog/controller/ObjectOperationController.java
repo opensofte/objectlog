@@ -1,9 +1,7 @@
-package org.sweetie.objectlog.objectlog.controller;/*
- * Copyright (C), 2021-2024
+package org.sweetie.objectlog.objectlog.controller;
+/*
  * FileName: ObjectOperationController
  * Author gouhao
- * Date: 2024/3/2 16:23
- * Description:
  */
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,13 +20,14 @@ import java.util.Map;
 public class ObjectOperationController {
     @Resource
     private ObjectOperationService operationService;
+
     @PostMapping("/add")
-    public void addLog(@RequestBody ObjectOperationDto model){
+    public void addLog(@RequestBody ObjectOperationDto model) {
         operationService.addLog(model);
     }
 
     @PostMapping("/query")
-    public Map<String, List<ObjectOperationDto>> query(ObjectOperationDto queryDto){
+    public Map<String, List<ObjectOperationDto>> query(ObjectOperationDto queryDto) {
         return operationService.query(queryDto);
     }
 }

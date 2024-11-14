@@ -1,20 +1,13 @@
-package org.sweetie.objectlog.objectlog.service;/*
- * Copyright (C), 2021-2024
+package org.sweetie.objectlog.objectlog.service;
+/*
  * FileName: ObjectOperationService
  * Author gouhao
- * Date: 2024/3/2 16:25
- * Description:
  */
 
 import com.baomidou.mybatisplus.service.IService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.sweetie.objectlog.core.model.ObjectAttributeModel;
-import org.sweetie.objectlog.core.model.ObjectOperationModel;
-import org.sweetie.objectlog.domain.ObjectOperationDto;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ObjectAttributeService extends IService<ObjectAttributeModel> {
     List<ObjectAttributeModel> getModelsByOperationId(List<String> idList);

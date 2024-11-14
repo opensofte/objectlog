@@ -1,9 +1,7 @@
-package org.sweetie.objectlog.core.enums;/*
- * Copyright (C), 2021-2023
+package org.sweetie.objectlog.core.enums;
+/*
  * FileName: AttributeTypeEnum
  * Author gouhao
- * Date: 2023/12/2 16:58
- * Description:
  */
 
 public enum AttributeTypeEnum {
@@ -18,5 +16,5 @@ public enum AttributeTypeEnum {
     /**
      * 多行文本字符串
      */
-     TEXT
+    TEXT
 }
